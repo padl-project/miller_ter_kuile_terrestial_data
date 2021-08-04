@@ -1,0 +1,126 @@
+---
+title: "Cleaning Weather Data"
+author: "Camila Vargas"
+date: "8/3/2021"
+output: html_document
+---
+
+
+## Set up
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(googledrive)
+library(here)
+library(data.table)
+library(tidyverse)
+library(readxl)
+library(janitor)
+
+# Create folders
+dir.create(paste0(getwd(),"/raw_data"))
+
+dir.create(paste0(getwd(),"/raw_data/weather"))
+
+```
+
+
+
+## Download data files into local computer
+
+In this case, the project has multiple types of data. Each type of data will be cleaned in its own Rmd and will become its own package. 
+
+```{r download files}
+# url of folder where the data lives
+# Copy pasete the url of the folder where the data lives
+
+folder_url <- "https://drive.google.com/drive/u/1/folders/12YcXFF5Dz11c29FtGtwZVCEwrgC4iVV4"
+
+# list of files inside the folder
+files <- drive_ls(as_id(folder_url))
+
+## Download each file to local computer
+purrr::walk2(
+    map(files$id, as_id),
+    paste0("raw_data/weather/", files$name),
+    drive_download,
+    overwrite = TRUE
+  )
+
+# Check all files where downloaded
+# Count files inside the raw_data forder to make sure the number of files downloaded is what is expected.
+raw_data_path <- paste0(getwd(), "/raw_data/weather")
+length(list.files(raw_data_path))
+
+```
+
+
+## Read data
+```{r read data}
+
+all_csv <- tibble(list.files(raw_data_path, pattern = ".csv")) %>% 
+  rename(file_name = 1) %>% 
+  mutate(path = paste0(raw_data_path, "/", file_name),
+         n = 1:n(),
+         type = "weather") %>% 
+  unite(obj_name, type, n, sep = "_", remove = FALSE)
+
+## funtion to clean names as we read the file
+read_clean <- function(dataset){
+  
+  read_csv(dataset) %>% 
+    clean_names()
+}
+
+## Read in all csv
+for (i in all_csv$n){
+  
+  assign(all_csv$obj_name[i], read_clean(all_csv$path[i]))
+}
+
+## List with all xls files
+all_xls <- tibble(list.files(raw_data_path, pattern = c("xls", "xlsx"))) %>% 
+  rename(file_name = 1) %>% 
+  mutate(path = paste0(raw_data_path, "/", file_name),
+         n = 1:n(),
+         type = "weather") %>% 
+  unite(obj_name, type, n, sep = "_", remove = FALSE)
+
+## read all xls
+
+read_pp_excel <- function(sheet_name){
+   
+  read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = sheet_name, skip = 6) %>% 
+  clean_names() %>% 
+  filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
+  select(1:7)
+}
+
+annual_pp_sheets <- excel_sheets(all_xls$path[1])
+
+anual_pp_2010 <- read_pp_excel("2010")
+
+anual_pp_2011 <- read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = "2011", skip = 6, trim_ws = TRUE) %>% 
+  clean_names() %>% 
+  filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
+  select(1:7) %>% 
+  mutate(timestamp = as.numeric(timestamp),
+         timestamp = as.POSIXct(timestamp*86400, origin = "1899-12-31", tz = "HAST"))
+
+
+anual_pp_2012 <- read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = "2012", skip = 6) %>% 
+  clean_names() %>% 
+  filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
+  select(1:7)
+
+anual_pp_2013 <- read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = "2013", skip = 6) %>% 
+  clean_names() %>% 
+  filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
+  select(1:7)
+
+
+
+```
+
+
