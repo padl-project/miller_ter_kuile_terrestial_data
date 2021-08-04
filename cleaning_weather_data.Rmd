@@ -56,28 +56,17 @@ length(list.files(raw_data_path))
 ```
 
 
-## Read data
+## Functions and tables with files info
+
 ```{r read data}
 
+## List wit all csv files in raw data
 all_csv <- tibble(list.files(raw_data_path, pattern = ".csv")) %>% 
   rename(file_name = 1) %>% 
   mutate(path = paste0(raw_data_path, "/", file_name),
          n = 1:n(),
          type = "weather") %>% 
   unite(obj_name, type, n, sep = "_", remove = FALSE)
-
-## funtion to clean names as we read the file
-read_clean <- function(dataset){
-  
-  read_csv(dataset) %>% 
-    clean_names()
-}
-
-## Read in all csv
-for (i in all_csv$n){
-  
-  assign(all_csv$obj_name[i], read_clean(all_csv$path[i]))
-}
 
 ## List with all xls files
 all_xls <- tibble(list.files(raw_data_path, pattern = c("xls", "xlsx"))) %>% 
@@ -87,40 +76,112 @@ all_xls <- tibble(list.files(raw_data_path, pattern = c("xls", "xlsx"))) %>%
          type = "weather") %>% 
   unite(obj_name, type, n, sep = "_", remove = FALSE)
 
-## read all xls
 
-read_pp_excel <- function(sheet_name){
+## function to read csv and clean names as we read the file
+read_clean <- function(dataset){
+  
+  read_csv(dataset) %>% 
+    clean_names()
+}
+
+## Function to read each pp sheet
+read_weather_excel <- function(sheet_name){
    
   read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = sheet_name, skip = 6) %>% 
   clean_names() %>% 
   filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
-  select(1:7)
+  select(1:last_col(2)) %>% 
+  mutate(timestamp = as.numeric(timestamp),
+         timestamp = as.POSIXct(timestamp*86400, origin = "1899-12-30", tz = "HAST"))
 }
 
-annual_pp_sheets <- excel_sheets(all_xls$path[1])
+```
 
-anual_pp_2010 <- read_pp_excel("2010")
+## Read files
 
-anual_pp_2011 <- read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = "2011", skip = 6, trim_ws = TRUE) %>% 
-  clean_names() %>% 
-  filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
-  select(1:7) %>% 
-  mutate(timestamp = as.numeric(timestamp),
-         timestamp = as.POSIXct(timestamp*86400, origin = "1899-12-31", tz = "HAST"))
+### Annual Precipitation
+
+```{r}
+## Read in all csv
+for (i in all_csv$n){
+  
+  assign(all_csv$obj_name[i], read_clean(all_csv$path[i]))
+}
+
+## The csv file is a summary table with avarage pp for years 2002 to 2016. We can use it to check if this data matches the raw data. But we do not need this file for the weather package.
+```
+
+### Read Weather Tables
+Timestamp every 15 min year round* for all weather data
+
+```{r}
+## Weather table (xls) - timestamp ever 15 min of pp register by day
+
+## Read each sheet separately to be mak sure all data is being read correctly
+
+w_2010 <- read_weather_excel("2010")
+
+w_2011 <- read_weather_excel("2011")
+
+w_2012 <- read_weather_excel("2012")
+
+w_2013 <- read_weather_excel("2013")
+
+w_2014 <- read_weather_excel("2014")
+
+w_2015 <- read_weather_excel("2015")
+
+w_2016 <- read_weather_excel("2016")
+
+```
 
 
-anual_pp_2012 <- read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = "2012", skip = 6) %>% 
-  clean_names() %>% 
-  filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
-  select(1:7)
+## QA/QC
 
-anual_pp_2013 <- read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = "2013", skip = 6) %>% 
-  clean_names() %>% 
-  filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
-  select(1:7)
+For each day, starting at 00:00 and ending at 23:45 in an inclrease of every 15 min, we expect to have 96 meassurments daily.
 
+- Timestamps were correctly converted to the corresponding year-month-day hours:min
+- 2010 starts on Oct 16 at 16:45 and hast countinous data every 15 min until Dec 31 23:34.
+- Years 2011, 2012 (leap), 2013 and 2014 have countinous data for every day of the year every 15 min.
+- Year 2015 has continuos data from Jan 1 until Nov 23 19:15 and then Sporadic data collection through end of 2015 (battery going out)
+- Yer 2016 has Sporadic data collection at beginning of 2016 (battery going out) and data goes only until Sep 28 14:30
+
+**Column names**
+- Years 2010:2013 have same columns
+- Years 2015:2016 have same columns
+- Year 2014 has some similarities with 10:13 and some with 15:16
+
+
+## Rename columns name
+Standarize columns names throughtout the years y and rename according to EDI standards.
+
+```{r}
+
+w_11_13 <- bind_rows(w_2010, w_2011, w_2012, w_2013)
+
+```
+
+## Combine all years into one datafram
+
+```{r}
+
+```
+
+
+## Read precipitation data
+Daily rainfall
+
+```{r}
+## Check for sheets names
+excel_sheets(all_xls$path[2])
+
+pp_annual <- read_excel(all_xls$path[2], sheet = "Annual", skip = 2) %>% 
+  clean_names()
 
 
 ```
+
+
+
 
 
