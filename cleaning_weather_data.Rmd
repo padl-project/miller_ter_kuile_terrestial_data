@@ -17,10 +17,18 @@ library(data.table)
 library(tidyverse)
 library(readxl)
 library(janitor)
+library(lubridate)
 
-# Create folders
-dir.create(paste0(getwd(),"/raw_data"))
+## Sets R not to use scientific notations
+options(scipen=999) 
 
+# Create raw data folders - DO I NEED A IF STATEMENT???
+
+if (!dir.exists(here::here("/raw_data"))){
+  dir.create(paste0(getwd(),"/raw_data"))
+}
+
+## If necesary create a sub directory inside the raw_data. This will be the case for porject that will end up in more than one package.
 dir.create(paste0(getwd(),"/raw_data/weather"))
 
 ```
@@ -30,6 +38,7 @@ dir.create(paste0(getwd(),"/raw_data/weather"))
 ## Download data files into local computer
 
 In this case, the project has multiple types of data. Each type of data will be cleaned in its own Rmd and will become its own package. 
+Make sure the file path on the code is updated to the correct folder. In this case we are working witht the weather data, so data is seved inside the weather folder. Update folder name if you are downloading other type of data.
 
 ```{r download files}
 # url of folder where the data lives
@@ -51,12 +60,14 @@ purrr::walk2(
 # Check all files where downloaded
 # Count files inside the raw_data forder to make sure the number of files downloaded is what is expected.
 raw_data_path <- paste0(getwd(), "/raw_data/weather")
+
 length(list.files(raw_data_path))
 
 ```
 
 
 ## Functions and tables with files info
+Creating a table with all of our files by type to use as an index to access each file.
 
 ```{r read data}
 
@@ -78,7 +89,7 @@ all_xls <- tibble(list.files(raw_data_path, pattern = c("xls", "xlsx"))) %>%
 
 
 ## function to read csv and clean names as we read the file
-read_clean <- function(dataset){
+read_csv_clean <- function(dataset){
   
   read_csv(dataset) %>% 
     clean_names()
@@ -105,10 +116,10 @@ read_weather_excel <- function(sheet_name){
 ## Read in all csv
 for (i in all_csv$n){
   
-  assign(all_csv$obj_name[i], read_clean(all_csv$path[i]))
+  assign(all_csv$obj_name[i], read_csv_clean(all_csv$path[i]))
 }
 
-## The csv file is a summary table with avarage pp for years 2002 to 2016. We can use it to check if this data matches the raw data. But we do not need this file for the weather package.
+## This csv file is a summary table with avarage pp for years 2002 to 2016. We can use it to check if this data matches the raw data. But we do not need this file for the weather package.
 ```
 
 ### Read Weather Tables
@@ -132,6 +143,7 @@ w_2014 <- read_weather_excel("2014")
 w_2015 <- read_weather_excel("2015")
 
 w_2016 <- read_weather_excel("2016")
+
 
 ```
 
@@ -157,13 +169,52 @@ Standarize columns names throughtout the years y and rename according to EDI sta
 
 ```{r}
 
-w_11_13 <- bind_rows(w_2010, w_2011, w_2012, w_2013)
+w_10_14 <- bind_rows(w_2010, w_2011, w_2012, w_2013, w_2014) %>% 
+  rename(batt_avg = batt_volt_avg,
+         bp_avg = bp_k_pa_avg,
+         slr_avg = slr_w_avg,
+         slr_tot = slrk_j_tot,
+         wind_speed_avg = wind_speed_10,
+         wind_speed_max = wind_speed_11,
+         wind_speed_min = wind_speed_12)
+
+w_15_16 <- bind_rows(w_2015, w_2016) %>% 
+  rename(batt_avg = batt_volt_avg,
+         bp_avg = bp_k_pa_avg,
+         slr_avg = slr_w_avg,
+         slr_tot = slrk_j_tot,
+         wind_speed_avg = wind_speed_8,
+         wind_speed_max = wind_speed_9,
+         wind_speed_min = wind_speed_10)  
+
 
 ```
 
 ## Combine all years into one datafram
 
 ```{r}
+w_complete <- bind_rows(w_10_14, w_15_16) %>%
+  mutate_at(2:13, as.numeric) %>% 
+  mutate(yr = year(timestamp)) %>% 
+  select(yr, timestamp, everything())
+
+```
+
+## Upload to dive
+```{r}
+dir.create(path = paste0(getwd(),"/clean_data"))
+
+write_csv(w_complete, paste0(getwd(),"/clean_data/2010_2016_palmyera_weather_table.csv"))
+
+## Finalized data forlder url
+finalized_url <- "https://drive.google.com/drive/u/1/folders/1GUrTanuN0VfBLjJBzqp3HeE8a-JX5VK6"
+
+drive_upload(media = paste0(getwd(),"/clean_data/2010_2016_palmyera_weather_table.csv"),
+             path = as_id(finalized_url),
+             name = "2010_2016_palmyra_weather_table.csv",
+             type = "csv")
+
+##Uploaded susccesfully: need to ceck NaN. When saving csv they tun into NAs. De we need to keep them as NaN?
 
 ```
 
