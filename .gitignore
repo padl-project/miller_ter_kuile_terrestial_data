@@ -39,6 +39,6 @@ vignettes/*.pdf
 .Renviron
 .Rproj.user
 
-## don't save raw data
-~/raw_data
-/raw_data
+## omit raw_data folder and everything inside
+raw_data/
+raw_data/*
