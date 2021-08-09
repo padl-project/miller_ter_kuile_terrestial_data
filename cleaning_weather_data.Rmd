@@ -38,7 +38,7 @@ dir.create(paste0(getwd(),"/raw_data/weather"))
 ## Download data files into local computer
 
 In this case, the project has multiple types of data. Each type of data will be cleaned in its own Rmd and will become its own package. 
-Make sure the file path on the code is updated to the correct folder. In this case we are working witht the weather data, so data is seved inside the weather folder. Update folder name if you are downloading other type of data.
+Make sure the file path on the code is updated to the correct folder. In this case we are working with the weather data, so data is saved inside the `weather` folder. Update folder name if you are downloading other type of data.
 
 ```{r download files}
 # url of folder where the data lives
@@ -125,6 +125,7 @@ for (i in all_csv$n){
 ### Read Weather Tables
 Timestamp every 15 min year round* for all weather data
 
+*Some years have missing data. See below
 ```{r}
 ## Weather table (xls) - timestamp ever 15 min of pp register by day
 
@@ -195,8 +196,10 @@ w_15_16 <- bind_rows(w_2015, w_2016) %>%
 ```{r}
 w_complete <- bind_rows(w_10_14, w_15_16) %>%
   mutate_at(2:13, as.numeric) %>% 
-  mutate(yr = year(timestamp)) %>% 
-  select(yr, timestamp, everything())
+  mutate(year = year(timestamp),
+         date = date(timestamp),
+         time = format(timestamp, format = "%H:%M:%S")) %>% 
+  select(year, date, time, everything(), -timestamp)
 
 ```
 
@@ -218,7 +221,7 @@ pp_monthly <- read_excel(all_xls$path[2], sheet = "Monthly Input (mm)") %>% clea
 
 ## Clean pp data
 ```{r}
-
+## First clean-up
 pp_annual_clean <- pp_annual%>% 
   rename(month = x1) %>% 
   filter(!month %in% c("Total", "AVG.", "Three rainiest days on record:", "40160", "39093", "41661", NA)) %>% 
@@ -227,7 +230,6 @@ pp_annual_clean <- pp_annual%>%
                names_to = "year",
                values_to = "rainfall") %>% 
   mutate(month = str_remove(month, "\\."),
-         month = month.name(month),
          year = str_remove(year, "x"),
          year = as.numeric(year))
 
@@ -237,6 +239,7 @@ test_avg <- pp_annual_clean %>%
   summarise(avg_test = mean(rainfall, na.rm = T)) %>% 
   mutate(check = avg - avg_test)
 
+## Finalizing the clean up: Standarizing names and rounding numbers
 pp_annual_final <- pp_annual_clean %>% 
   mutate(month = case_when(month == "Aug" ~ "August",
                            month == "Dec" ~ "December",
@@ -270,23 +273,39 @@ pp_monthly_clean <- pp_monthly %>%
 
 ```
 
+## Save data into local computer
+```{r}
+dir.create(path = paste0(getwd(),"/clean_data"))
+
+write_csv(w_complete, paste0(getwd(),"/clean_data/2010_2016_palmyra_weather_table.csv"))
+
+write_csv(pp_monthly_clean, paste0(getwd(), "/clean_data/2008_2017_palmyra_monthly_rainfall.csv"))
+
+```
+
 
 
 ## Upload to dive
 ```{r}
-dir.create(path = paste0(getwd(),"/clean_data"))
-
-write_csv(w_complete, paste0(getwd(),"/clean_data/2010_2016_palmyera_weather_table.csv"))
 
 ## Finalized data forlder url
-finalized_url <- "https://drive.google.com/drive/u/1/folders/1GUrTanuN0VfBLjJBzqp3HeE8a-JX5VK6"
+finalized_url <- "https://drive.google.com/drive/u/1/folders/1xAeDVipB1X18JKCebb6J09qcvUqjKOGp"
 
+## Upload weather data
 drive_upload(media = paste0(getwd(),"/clean_data/2010_2016_palmyera_weather_table.csv"),
              path = as_id(finalized_url),
              name = "2010_2016_palmyra_weather_table.csv",
              type = "csv")
 
-##Uploaded susccesfully: need to ceck NaN. When saving csv they tun into NAs. Do we need to keep them as NaN?
+## Uploaded susccesfully: need to ceck NaN. When saving csv they tun into NAs. Do we need to keep them as NaN?
+
+## Upload rainfall table
+drive_upload(media = paste0(getwd(),"/clean_data/2008_2017_palmyra_monthly_rainfall.csv"),
+             path = as_id(finalized_url),
+             name = "2008_2017_palmyra_monthly_rainfall.csv",
+             type = "csv")
+
+
 
 ```
 
