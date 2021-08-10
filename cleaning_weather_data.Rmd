@@ -152,21 +152,24 @@ w_2016 <- read_weather_excel("2016")
 ## QA/QC
 
 For each day, starting at 00:00 and ending at 23:45 in an inclrease of every 15 min, we expect to have 96 meassurments daily.
+(96 x 365 = 35040)
 
 - Timestamps were correctly converted to the corresponding year-month-day hours:min
-- 2010 starts on Oct 16 at 16:45 and hast countinous data every 15 min until Dec 31 23:34.
-- Years 2011, 2012 (leap), 2013 and 2014 have countinous data for every day of the year every 15 min.
+- 2010 starts on Oct 16 at 16:45 and has countinous data every 15 min until Dec 31 23:34 (7,317 observations)
+- Years 2011, 2012 (leap), 2013 and 2014 have countinous data for every day of the year every 15 min. (35,040; 35,136)
 - Year 2015 has continuos data from Jan 1 until Nov 23 19:15 and then Sporadic data collection through end of 2015 (battery going out)
-- Yer 2016 has Sporadic data collection at beginning of 2016 (battery going out) and data goes only until Sep 28 14:30
+- Year 2016 has Sporadic data collection at beginning of 2016 (battery going out) and data goes only until Sep 28 14:30
 
 **Column names**
 - Years 2010:2013 have same columns
 - Years 2015:2016 have same columns
-- Year 2014 has some similarities with 10:13 and some with 15:16
+- Year 2014 has some similarities with 2010:2013 and some with 2015:2016
+
+
 
 
 ## Rename columns name
-Standarize columns names throughtout the years y and rename according to EDI standards.
+Standarize columns names throughtout the years and rename according to EDI standards.
 
 ```{r}
 
@@ -191,6 +194,25 @@ w_15_16 <- bind_rows(w_2015, w_2016) %>%
 
 ```
 
+
+## Identify number of missing values per year
+According to the metadata there are three ways missing values are presented: "serv.", "NAN" or NA
+
+NA is an empty cell
+**From the orriginal Excel**
+NAN = Not A Number
+serv. = Servicing logger (no data)
+
+```{r}
+
+# serv_10_14 <- w_10_14 %>% 
+#   filter_at(vars(2:13), any_vars(. == "serv."))
+# 
+# serv_10_14 <- w_10_14 %>% 
+  
+
+```
+
 ## Combine all years into one datafram
 
 ```{r}
@@ -202,6 +224,27 @@ w_complete <- bind_rows(w_10_14, w_15_16) %>%
   select(year, date, time, everything(), -timestamp)
 
 ```
+
+## Inspect
+
+Check counts are as expected
+```{r}
+## counts Nas in each columns
+freeR::complete(w_complete)
+ ## counts entries for each year
+table(w_complete$year)
+
+range(w_complete$date)
+
+range(w_complete$time)
+
+str(w_complete)
+
+```
+
+Do NAs match with what expected?
+
+
 
 
 ## Read precipitation data
@@ -265,8 +308,10 @@ pp_monthly_clean <- pp_monthly %>%
   pivot_longer(cols = 2:113,
                names_to = "month_year",
                values_to = "rainfall") %>% 
+  filter(!day %in% c("Total inches", "Total mm")) %>% 
   separate(month_year, c("month", "yr"), sep = "-") %>% 
-  mutate(century = 20) %>% 
+  mutate(century = 20,
+         day = as.numeric(day)) %>% 
   unite(year, century, yr, sep = "") %>% 
   select(year, month, day, rainfall) %>% 
   arrange(year)
@@ -292,7 +337,7 @@ write_csv(pp_monthly_clean, paste0(getwd(), "/clean_data/2008_2017_palmyra_month
 finalized_url <- "https://drive.google.com/drive/u/1/folders/1xAeDVipB1X18JKCebb6J09qcvUqjKOGp"
 
 ## Upload weather data
-drive_upload(media = paste0(getwd(),"/clean_data/2010_2016_palmyera_weather_table.csv"),
+drive_upload(media = paste0(getwd(),"/clean_data/2010_2016_palmyra_weather_table.csv"),
              path = as_id(finalized_url),
              name = "2010_2016_palmyra_weather_table.csv",
              type = "csv")
@@ -305,7 +350,10 @@ drive_upload(media = paste0(getwd(),"/clean_data/2008_2017_palmyra_monthly_rainf
              name = "2008_2017_palmyra_monthly_rainfall.csv",
              type = "csv")
 
-
-
 ```
+
+
+## Metadata
+
+
 
