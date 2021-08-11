@@ -1,0 +1,71 @@
+---
+title: "cleaning_isotope_data"
+author: "Beth Davis"
+date: "8/9/2021"
+output: html_document
+---
+
+## Set up and packages
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+# Installs and loads packages if the user doesn't have them already installed
+if (!require("googledrive")) {install.packages("googledrive"); require("googledrive")}
+if (!require("here")) {install.packages("here"); require("here")}
+if (!require("data.table")) {install.packages("data.table"); require("data.table")}
+if (!require("tidyverse")) {install.packages("tidyverse"); require("tidyverse")}
+if (!require("readxl")) {install.packages("readxl"); require("readxl")}
+if (!require("janitor")) {install.packages("janitor"); require("janitor")}
+if (!require("lubridate")) {install.packages("lubridate"); require("lubridate")}
+
+# Optional package loading if you don't want to use the above ^
+library(googledrive)
+library(here)
+library(data.table)
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(lubridate)
+
+
+## Sets R not to use scientific notations
+options(scipen=999) 
+
+# Create raw data folders - DO I NEED A IF STATEMENT???
+
+if (!dir.exists(here::here("/raw_data"))){
+  dir.create(paste0(getwd(),"/raw_data"))
+}
+
+## If necesary create a sub directory inside the raw_data. This will be the case for projects that will end up in more than one package.
+dir.create(paste0(getwd(),"/raw_data/isotope"))
+```
+
+## Googledrive package sign-in
+
+```{r}
+# To change accounts on the googledrive package, uninstall then reinstall the package. Run a googledrive function to prompt the sign-in selection screen
+remove.packages("googledrive")
+install.packages("googledrive")
+
+drive_find(n_max = 10)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
