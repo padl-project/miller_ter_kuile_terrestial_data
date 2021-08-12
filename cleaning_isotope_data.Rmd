@@ -63,14 +63,14 @@ Make sure the file path on the code is updated to the correct folder. In this ca
 
 ```{r download files}
 # url of folder where the data lives
-# Copy pasete the url of the folder where the data lives
+# Copy paste the url of the folder where the data lives
 
 folder_url <- "https://drive.google.com/drive/u/1/folders/1mWTvcrU-P3tu5brHKXArBbgoV-NbnVzd"
 
 # list of files inside the folder
 files <- drive_ls(as_id(folder_url))
 
-## Download each file to local computer
+## Downloads each file to local computer
 purrr::walk2(
     map(files$id, as_id),
     paste0("raw_data/isotope/", files$name),
@@ -79,7 +79,7 @@ purrr::walk2(
   )
 
 # Check all files where downloaded
-# Count files inside the raw_data forder to make sure the number of files downloaded is what is expected.
+# Count files inside the raw_data folder to make sure the number of files downloaded is what is expected.
 raw_data_path <- paste0(getwd(), "/raw_data/isotope")
 
 length(list.files(raw_data_path))
@@ -87,8 +87,12 @@ length(list.files(raw_data_path))
 ```
 
 
+## Read Files and Begin QA/QC Checks
 
+```{r}
 
+# Need Conversion method from xls/xlsx to csv
+# Otherwise weather code should still work?
 
 
 
