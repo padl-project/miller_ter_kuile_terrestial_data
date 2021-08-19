@@ -93,15 +93,6 @@ Un-Edited Notes from Raw:
   Combined 2014 values from sheets '2013-14' and 'isotopes 2014-2014' into new file - 2014_Palmyra_Geograpsus_weight_Isotopes
   Combined 2015 values from sheets 'isotopes 2014-2015' and '2015' into new file - 2015_Palmyra_Geograpsus_length_isotopes
   Sheets 'weights 2013-14' and 'lengths 2015' could not be consolidated due to sample ID ambiguity
-  
-  
-
-  
-  
-
-  
-
-
 
 
 ## Set up and packages
@@ -186,34 +177,31 @@ length(list.files(raw_data_path))
 ```
 
 
-## Convert files into a tibble (without renaming)
+## Convert files into a tibble (without renaming) - Not Tested
 
 ```{r}
 
-# Need Conversion method from xls/xlsx to csv
-# Otherwise weather code should still work?
-
-
-
-## List with all xls files
-all_xls <- tibble(list.files(raw_data_path, pattern = c("xls", "xlsx")))
-
+## List wit all csv files in raw data
+all_csv <- tibble(list.files(raw_data_path, pattern = ".csv")) %>% 
+  rename(file_name = 1) %>% 
+  mutate(path = paste0(raw_data_path, "/", file_name),
+         n = 1:n(),
+         type = "isotope") %>% 
+  unite(obj_name, type, n, sep = "_", remove = FALSE)
 
 ## function to read csv and clean names as we read the file
 read_csv_clean <- function(dataset){
   
   read_csv(dataset) %>% 
     clean_names()
-}
-
 ```
 
 Instead of immediately renaming the files, this data package will likely end up being sorted into three separate files - Soil Isotopes, Plant Isotopes, and Animal Isotopes.
 Sheets will be cleaned and examined for merging before being renamed to make comparison with the excel files easier.
 
+
 Next Steps:
-Convert the xls/xlsx files into csv
-Transfer over read code to open the files
+Test read code to open the files
 Group files based on column similarities and identify which can be merged first
 Clean other sheets to allow merging
 
