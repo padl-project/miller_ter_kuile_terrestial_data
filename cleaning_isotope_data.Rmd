@@ -5,6 +5,105 @@ date: "8/9/2021"
 output: html_document
 ---
 
+## Description and Metadata Information 
+
+  This information has been preserved from notes left in the raw files before cleaning and will be listed with the sheets they apply to under the raw file name.
+  
+Un-Edited Notes from Raw:
+    
+  File: 2007-08_Palmyra_Gecko Isotopes
+  Individual records - half indicate that the reads came back in May 2008, so I       assume those were geckos collected in 2007? The other half are reads that came     back in 2009, so these are presumed to be from 2008.
+    
+  File: 2009_Palmyra_Crab_Isotopes
+  Individual records - coconut crabs, orange cardisoma, and both species hermit        crabs
+  I'm a little confused about the last few entries labeled "coconut", there are no     coconut crabs on lost, so I'm thinking these were Cocos trees?
+
+
+  File: 2009-2012_Palmyra_Plant_Isotopes
+  * plant isotope data	2010-2012	pooled by islet within year
+
+  File: 2008_Palmyra_Rat_Isotopes
+  * 2009	rat isotope data	individuals
+    
+  File: 2009_Palmyra_Cane_Spider_Isotopes
+  * Cane spider isotopes	2009	Individuals
+
+  File: 2009_Palmyra_Day_Spider_Isotopes
+  2009	small spider isotopes	pooled	I assume this means Neoscona theisi data. It     is pooled by island among a few individuals
+
+  File: 2010_Palmyra_Cane_spider_Isotopes
+  cane spider isotope data	2010	pooled per island for 2-15 individuals for each
+
+  File: 2009_Palmyra_Insect_Amphipod_Isopod_Isotopes
+  2009	insect, amphipod, and isopod isotope data	individuals	not sure on species    names for these… or whether they were one particular species. Ask Hillary
+  
+  File: 2007-2009_Palmyra_Gecko_Sizes_and_Isotopes
+  gecko isotopes linked to body sizes	pre-2010	unclear what years these geckos      came from. Data from Briggs et al. 2012 Plos paper
+  
+  File: 2012_Palmyra_Plant_Isotopes
+  plant isotopes	2012	per island	this is duplicate (with maybe extra) of         2010-2012 plant datasheet
+  
+  File: 2013-2015 Palmyra_Geograpsus_crab_weights_and_isotopes_data
+  Geograpsus isotope and body size data	2013-2015	individuals**
+  
+  File: 2010_Palmyra_Day_Spider_isotopes
+  Neoscona theisi isotope data	2010	pooled
+  
+  File: 2012_Palmyra_Day_Spider_Isotopes
+  2012	Day Spider isotopes	pooled
+  
+  File: 2010_Palmyra_Insect_Isotopes
+  insect isotope data	2010	pooled	crickets in this year were either Cycloptilum    or Ornebius collected during sweeps of understory vegetation
+  
+  File: 2011_Palmyra_Soil_Isotopes
+  soil isotopes	2011	pooled from islet	
+
+  File: 2010_Palmyra_Gecko_Isotopes
+  gecko isotopes	2010	both pooled and individual	unclear if there were more this     year? This is a small sample…
+			not sure if these were by species or not, seems that they were not                 distinguished this way, so genus is best level of resolution
+
+  File: 2010_Palmyra_Plant_Isotopes
+  plant isotope data	2010	this is duplicate data (with maybe more) from the        compiled 2010-2012 data
+
+  File: 2011_Palmyra_Plant_isotopes
+  plant isotopes	2011	one plant on a sheet of soil samples
+
+
+  File: 2012_Palymra_Cane Spider_Isotopes
+  2012	Cane spider isotopes	pooled and some individual	pooled isotope data from     2-15 individuals each, with individaul isotope data for 12 Eastern and 10 Kaula     individuals
+  
+  File: 2011_Palmyra_Cane_Spider_Isotopes
+  2011	cane spider isotopes	Individual	only one data point on a sheet with all    soil samples, no islet name
+
+  File: 2011_Palmyra_Gecko_Isotopes
+  gecko isotopes	2011	individuals	all run by Nicole Sarto except Sand A-K, which     were run on a different run by AMtK
+	unclear if one species or another, genus is best resolution
+
+  File: 2015_Palmyra_Cane_Spider_Isotopes_Body_Size
+  cane spider isotopes and body size	2015	individuals	body size is body length     from front of cephalothorax to back of thorax
+  
+  d15NNorm**	and Wt.% N are Nitrogen vs Air
+  d13CNorm**	and Wt.% C are Carbon vs PDB
+  
+
+### Other Changes of Note
+  Manually combined duplicate values for 2013-2015 Geograpsus crab weight and        isotope sheets and carried over non-duplicate columns to consolidate and preserve     data
+  Due to different sample ID conventions, not all sheets in the original file could     be combined
+  Combined 2013 values from sheets 'isotopes 2013' and '2013-14' into new file -      2013_Palmyra_Geograpsus_weight_isotopes
+  Combined 2014 values from sheets '2013-14' and 'isotopes 2014-2014' into new file - 2014_Palmyra_Geograpsus_weight_Isotopes
+  Combined 2015 values from sheets 'isotopes 2014-2015' and '2015' into new file - 2015_Palmyra_Geograpsus_length_isotopes
+  Sheets 'weights 2013-14' and 'lengths 2015' could not be consolidated due to sample ID ambiguity
+  
+  
+
+  
+  
+
+  
+
+
+
+
 ## Set up and packages
 
 ```{r setup, include=FALSE}
