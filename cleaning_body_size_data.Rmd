@@ -1,0 +1,344 @@
+---
+title: "Cleaning Body Size data"
+author: "Camila Vargas"
+date: "8/12/2021"
+output: html_document
+---
+
+This script cleans data on Body sizes for taxa including cane spiders, geckos, and other spiders and insects provided by Ana Miller-ter Kuile in July 2021.
+Find Miller-ter Kuile raw data [here](https://github.com/anamtk/palmyra/tree/main/raw_data/body_sizes)
+
+## Set up
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(googledrive)
+library(here)
+library(data.table)
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(lubridate)
+
+## Sets R not to use scientific notations
+options(scipen=999) 
+
+# Create raw data folders - IS THE IF STATEMENT NECESARY???
+
+if (!dir.exists(here::here("/raw_data"))){
+  dir.create(paste0(getwd(),"/raw_data"))
+}
+
+## If necesary create a sub directory inside the raw_data. This will be the case for porject that will end up in more than one package.
+dir.create(paste0(getwd(),"/raw_data/body_size"))
+
+```
+
+
+
+## Download data files into local computer
+
+In this case, the project has multiple types of data. Each type of data will be cleaned in its own Rmd and will become its own package. 
+Make sure the file path on the code is updated to the correct folder. In this case we are working with the weather data, so data is saved inside the `weather` folder. Update folder name if you are downloading other type of data.
+
+```{r download files}
+# url of folder where the data lives
+# Copy pasete the url of the folder where the data lives
+
+folder_url <- "https://drive.google.com/drive/u/1/folders/1Ypg74d5XzyCLG03qEVR1eaJOrvREyRHC"
+
+# list of files inside the folder
+files <- drive_ls(as_id(folder_url))
+
+## Download each file to local computer
+purrr::walk2(
+    map(files$id, as_id),
+    paste0("raw_data/body_size/", files$name),
+    drive_download,
+    overwrite = TRUE)
+
+```
+
+## Check all files were downloaded 
+```{r}
+## File path to raw data used in this script
+raw_data_path <- paste0(getwd(), "/raw_data/body_size")
+
+# Count files inside the raw_data forder to make sure the number of files downloaded is what is expected.
+length(list.files(raw_data_path))
+
+```
+
+
+
+## Functions and tables with files info
+Creating a table with all of our files by type to use as an index to access each file.
+
+```{r read data}
+
+## List wit all csv files in raw data
+all_csv <- tibble(list.files(raw_data_path, pattern = ".csv")) %>% 
+  rename(file_name = 1) %>% 
+  mutate(path = paste0(raw_data_path, "/", file_name),
+         n = 1:n(),
+         type = "body_size") %>% 
+  unite(obj_name, type, n, sep = "_", remove = FALSE)
+
+## List with all xls files
+all_xls <- tibble(list.files(raw_data_path, pattern = c("xls", "xlsx"))) %>% 
+  rename(file_name = 1) %>% 
+  mutate(path = paste0(raw_data_path, "/", file_name),
+         n = 1:n(),
+         type = "body_size") %>% 
+  unite(obj_name, type, n, sep = "_", remove = FALSE)
+
+
+## function to read csv and clean names as we read the file
+read_csv_clean <- function(dataset){
+  
+  read_csv(dataset) %>% 
+    clean_names()
+}
+
+
+```
+
+## Read csv files
+
+The only csv file is Spider Insect mass length
+
+```{r}
+## Read in all csv
+for (i in all_csv$n){
+  
+  assign(all_csv$obj_name[i], read_csv_clean(all_csv$path[i]))
+}
+
+```
+
+body_size_1 - 2010-2012_Spider_Insect_mass_length - This data set is for the most part organized. It needs some standarization of dates and names.
+
+## Read excel files
+
+**Cane Spider**
+```{r}
+## chseck sheet names
+excel_sheets(all_xls$path[1])
+
+cane_spider_09 <- read_excel(all_xls$path[1], sheet = "Sheet1") %>% 
+  clean_names()
+
+## Is this table a summary table from data above - We will not include processed or summary data.
+cane_spider_09_2 <- read_excel(all_xls$path[1], sheet = "Sheet2") %>% 
+  clean_names()
+
+cane_spider_10 <- read_excel(all_xls$path[2], sheet = "Sheet1") %>% 
+  clean_names()
+
+
+excel_sheets(all_xls$path[6])
+cane_spider_15_loc <- read_excel(all_xls$path[6], sheet = "Spider Vial Locations") %>% 
+  clean_names()
+
+cane_spider_15_size <- read_excel(all_xls$path[6], sheet = "Spider Sizes") %>% 
+  clean_names()
+
+cane_spider_15_me <- read_excel(all_xls$path[6], sheet = "Measurement Errors") %>% 
+  clean_names()
+
+
+```
+
+## Cleaning cane spider data 
+```{r}
+cs_09_clean <- cane_spider_09 %>% 
+  rename(notes = measurement_complications) %>% 
+  slice(1:132) %>% 
+  mutate(year = 2009,
+         date_collected = NA,
+         prosoma = NA,
+         species = "cane spider") %>% 
+  unite(spider_id, site, spider_number, sep = " ", remove = FALSE) %>% 
+  select(year, date_collected, species, site, spider_id, length, weight, prosoma, notes)
+
+
+cs_10_clean <- cane_spider_10 %>% 
+  rename(site = island,
+         weight = weight_g,
+         length = length_mm) %>% 
+  mutate(year = 2010,
+         date_collected = NA,
+         prosoma = NA,
+         species = "cane spider", 
+         # All measurments that have a not will be converted to NAs
+         weight = as.numeric(weight),
+         length = as.numeric(length)) %>% 
+  unite(spider_id, site, number, sep = " ", remove = FALSE) %>% 
+  select(year, date_collected, species, site, spider_id, length, weight, prosoma, notes)
+
+cs_15_clean <-  cane_spider_15_size %>% 
+  rename(weight = weight_g,
+         length = length_mm,
+         prosoma = prosoma_mm,
+         notes = note) %>% 
+  mutate(year = 2015,
+         species = "cane spider") %>% 
+  select(year, date_collected, species, site, spider_id, length, weight, prosoma, notes)
+  
+
+## Not sure what measuerment errors are but it lookslike for some spiders id there where more than one measurement and the slightly vary from each other. ASK ANA if this is worth including.
+## Not clear what the Vial locations are and if we should include this data.
+  
+
+cane_spider_all <- bind_rows(cs_09_clean, cs_10_clean, cs_15_clean)
+
+write_csv(cane_spider_all, path = "clean_data/2009_2010_2015_cane_spider_body_size.csv")
+
+```
+
+Notes for data on 2009:
+Juiced = fluids coming out from spider's body, may have decreased weight
+Squished = organs/solids coming out of body
+Broken = head broken off of abdomen, difficult to measure length
+Length measured from white stripe in front of eyes to tip of abdomen
+
+
+**Gecko**
+```{r}
+excel_sheets(all_xls$path[3])
+gecko_10 <- read_excel(all_xls$path[3], sheet = "Sheet1") %>% 
+  clean_names()
+
+excel_sheets(all_xls$path[4])
+gecko_11 <- read_excel(all_xls$path[4], sheet = "geckos", skip = 1) %>% 
+  clean_names()
+
+excel_sheets(all_xls$path[4])
+gecko_11_summary <- read_excel(all_xls$path[4], sheet = "survey summary", skip = 1) %>% 
+  clean_names()
+
+excel_sheets(all_xls$path[5])
+gecko_14 <- read_excel(all_xls$path[5], sheet = "geckos", skip = 1) %>% 
+  clean_names()
+
+gecko_14_summary <- read_excel(all_xls$path[5], sheet = "survey summary", skip = 1) %>% 
+  clean_names()
+
+excel_sheets(all_xls$path[7])
+gecko_15_surv <- read_excel(all_xls$path[7], sheet = "Survey Data") %>% 
+  clean_names()
+
+gecko_15_me <- read_excel(all_xls$path[7], sheet = "Gecko Measurements") %>% 
+  clean_names()
+
+
+```
+
+
+## Clening Gecko data
+
+Data for years: 2010, 2011, 2014, and 2015
+
+We have length and weight meassurments and also suvey details (_summary or _surv)
+
+
+```{r}
+g_10_clean <- gecko_10 %>% 
+  rename(length = body_length) %>% 
+  mutate(year = 2010,
+         site = NA,
+         date = NA,
+         species = "gecko",
+         notes = "From an email by Alex Mclnturff")
+
+
+g_11_clean <- gecko_11 %>% 
+  rename(site = island,
+         length = tot_length,
+         weight = weight_g) %>% 
+  mutate(year = 2011) %>% 
+  ## all "NA" will become real NAs
+  mutate_at(vars(length, weight, eggs, svl, tail_collected), as.numeric) %>% 
+  unite(gecko_id, site, id_number, sep = " ", remove = FALSE) %>% 
+  select(year, date, species, site, gecko_id, length, weight, svl,eggs, sex, tail_collected, notes)
+
+## Notes: some tail samples were too small for isotope samples, so those islands were revisited.
+## During those initial surveys, SVL was not measured, and sex and reproductive status of individuals was not thoroughly checked, so those cells where that info is uncertain are marked with "NA".
+##  At some islands, extra geckos (past number needed for isotopes) were collected during the survey period.  To save time, the geckos were subsampled, and only 12-19 were fully measured and tails collected, though all geckos collected were id'd to species
+
+
+g_14_clean <- gecko_14 %>% 
+  rename(site = island,
+         weight = weight_g) %>%
+  mutate(year = 2014,
+         length = NA) %>% 
+  mutate_at(vars(length, weight, svl), as.numeric) %>% 
+  unite(gecko_id, site, id_number, sep = " ", remove = FALSE) %>%
+  select(year, date, species, site, gecko_id, length, weight, svl,eggs, sex, notes)
+  
+
+g_15_clean <- gecko_15_me %>%
+  separate(col = gecko_id,
+           into = c("site", "id"),
+           sep = " ",
+           remove = FALSE) %>% 
+  mutate(year = 2015,
+         lenght = NA,
+         date = case_when(site %in% c("Strawn", "Aviation") ~ "2015-07-11",
+                          site %in% c("Frigate", "Portsmouth", "Eastern") ~ "2015-07-12",
+                          T ~ "2015-07-13") %>% as.Date(.))%>% 
+  rename(weight = wt_g, 
+         svl = svl_mm) %>% 
+  select(year, date, species, site, gecko_id, weight, svl, notes)
+
+
+## Combine all years of Geko data
+
+gecko_all <- bind_rows(g_10_clean, g_11_clean, g_14_clean, g_15_clean) %>% 
+  mutate(species_note = case_when(str_detect(species, "\\?") ~ "not clear"),
+         species = str_remove_all(species, "\\?") %>% trimws(.),
+         species_note = ifelse(species == "" & species_note == "not clear", "unknown", species_note),
+         species = ifelse(species %in% c("hybrid", "Hybird", "Hybrid"), "hybrid", species),
+         species_note = case_when(species == "unknown, probably L. lug" ~ "not clear",
+                                  species == "male of new species (or hybrid, photo taken)" ~ "unknown",
+                                  species == "unknown - either dark morph L. lug or house gecko" ~ "unknown - either dark morph L. lug or house gecko",
+                                  T ~ species_note),
+         species = case_when(species == "L." ~ "Lug",
+                             species %in% c("L.lug", "unknown, probably L. lug") ~ "L. lug",
+                             species %in% c("male of new species (or hybrid, photo taken)", "unknown - either dark morph L. lug or house gecko") ~ "",
+                             T ~ species),
+         species = ifelse(species %in% c("NA", ""), NA, species),
+         site = case_when(site == "Whip" ~ "Whippoorwill",
+                          T ~ site),
+         sex = case_when(sex %in% c("F", "M", NA) ~ sex,
+                         sex == "male" ~ "M")) %>%
+  select(year, date, species, species_note, site, gecko_id, length, weight, svl, eggs, sex, tail_collected, notes)
+                             
+
+write_csv(gecko_all, "clean_data/2010_2015_gecko_body_size.csv")
+
+```
+
+## Cleaning insect data
+
+```{r}
+insect_clean <- body_size_1 %>% 
+  mutate(year = case_when(date == "2012" ~ 2012,
+                          T ~ 2010),
+         date = ifelse(date == "2012", NA, date) %>% as.Date(., format = "%m/%d/%y"),
+         number = case_when(number == "252/282" ~ "252",
+                            T ~ number) %>% as.numeric(.),
+         island = case_when(island == "NF" ~ "North Fighter",
+                            island == "SF" ~ "South Fighter",
+                            island == "P.mouth" ~ "Portsmouth",
+                            island == "WHIP" ~ "Whippoorwill",
+                            T ~ island)) %>% 
+  rename(site = island,
+         weight = weight_mg,
+         length = length_mm) %>% 
+  select(year, date, everyhing())
+
+
+
+```
