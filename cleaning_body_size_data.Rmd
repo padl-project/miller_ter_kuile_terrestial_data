@@ -117,7 +117,7 @@ for (i in all_csv$n){
 
 ```
 
-body_size_1 - 2010-2012_Spider_Insect_mass_length - This data set is for the most part organized. It needs some standarization of dates and names.
+body_size_1 - 2010-2012_Spider_Insect_mass_length - This data set is for the most part organized. It needs some standarization of dates and names. Cleaning insect data below.
 
 ## Read excel files
 
@@ -125,7 +125,6 @@ body_size_1 - 2010-2012_Spider_Insect_mass_length - This data set is for the mos
 ```{r}
 ## chseck sheet names
 excel_sheets(all_xls$path[1])
-
 cane_spider_09 <- read_excel(all_xls$path[1], sheet = "Sheet1") %>% 
   clean_names()
 
@@ -133,9 +132,9 @@ cane_spider_09 <- read_excel(all_xls$path[1], sheet = "Sheet1") %>%
 cane_spider_09_2 <- read_excel(all_xls$path[1], sheet = "Sheet2") %>% 
   clean_names()
 
+excel_sheets(all_xls$path[2])
 cane_spider_10 <- read_excel(all_xls$path[2], sheet = "Sheet1") %>% 
   clean_names()
-
 
 excel_sheets(all_xls$path[6])
 cane_spider_15_loc <- read_excel(all_xls$path[6], sheet = "Spider Vial Locations") %>% 
@@ -152,6 +151,7 @@ cane_spider_15_me <- read_excel(all_xls$path[6], sheet = "Measurement Errors") %
 
 ## Cleaning cane spider data 
 ```{r}
+
 cs_09_clean <- cane_spider_09 %>% 
   rename(notes = measurement_complications) %>% 
   slice(1:132) %>% 
@@ -193,7 +193,7 @@ cs_15_clean <-  cane_spider_15_size %>%
 
 cane_spider_all <- bind_rows(cs_09_clean, cs_10_clean, cs_15_clean)
 
-write_csv(cane_spider_all, path = "clean_data/2009_2010_2015_cane_spider_body_size.csv")
+write_csv(cane_spider_all, here::here("clean_data/2009_2010_2015_cane_spider_body_size.csv"))
 
 ```
 
@@ -214,7 +214,6 @@ excel_sheets(all_xls$path[4])
 gecko_11 <- read_excel(all_xls$path[4], sheet = "geckos", skip = 1) %>% 
   clean_names()
 
-excel_sheets(all_xls$path[4])
 gecko_11_summary <- read_excel(all_xls$path[4], sheet = "survey summary", skip = 1) %>% 
   clean_names()
 
@@ -236,7 +235,7 @@ gecko_15_me <- read_excel(all_xls$path[7], sheet = "Gecko Measurements") %>%
 ```
 
 
-## Clening Gecko data
+## Cleaning Gecko data
 
 Data for years: 2010, 2011, 2014, and 2015
 
@@ -316,9 +315,37 @@ gecko_all <- bind_rows(g_10_clean, g_11_clean, g_14_clean, g_15_clean) %>%
   select(year, date, species, species_note, site, gecko_id, length, weight, svl, eggs, sex, tail_collected, notes)
                              
 
-write_csv(gecko_all, "clean_data/2010_2015_gecko_body_size.csv")
+write_csv(gecko_all, here::here("clean_data/2010_2015_gecko_body_size.csv"))
 
 ```
+
+
+## Cleaning Gecko Survey detail Information
+```{r}
+g_surv_11 <- gecko_11_summary %>% 
+  select(island, date, survey_length, start_time, survey_time = tot_survey_time, number_collected, number_missed, total_seen, moon, weather, location, vegetation_substrate_found_on, notes)
+
+
+g_surv_14 <- gecko_14_summary %>% 
+  select(island, date, survey_length, start_time, survey_time = tot_survey_time, number_collected, number_missed, total_seen,  moon, weather, location, vegetation_substrate_found_on, notes)
+
+
+g_surv_15 <- gecko_15_surv %>% 
+  fill(island, date, time) %>% 
+  mutate(survey_time = format(survey_time, format = "%H:%M"),
+         survey_time = case_when(survey_time == "07:30" ~ 7.5,
+                                 survey_time == "15:00" ~ 15),
+         total_seen = seen_total_caught_missed + caught + missed) %>% 
+  select(island, date, start_time = time, survey_time, number_collected = caught, number_missed = missed, total_seen, location = sample_location, notes)
+
+
+gecko_survey_all <- bind_rows(g_surv_11, g_surv_14, g_surv_15) %>% 
+   mutate(start_time = format(start_time, format = "%H:%M"),
+          year = year(date)) %>% 
+  select(year, date, everything())
+
+```
+
 
 ## Cleaning insect data
 
@@ -337,8 +364,22 @@ insect_clean <- body_size_1 %>%
   rename(site = island,
          weight = weight_mg,
          length = length_mm) %>% 
-  select(year, date, everyhing())
+  select(year, date, everything())
 
 
+write_csv(insect_clean, here::here("clean_data/2010_and_2012_insect_body_size.csv"))
 
 ```
+
+
+### Questions for Ana
+**Cane Spider**
+- What are the measuremet units for length and weight for data in 2009? Lenght in cm and wight in g??
+
+**Geckos**
+
+Survey data
+1. What is the survey lenght? What are the units?
+2. Is total survey time in Min? What about for the 2015 data, 7:30 meand 7.5 min?
+
+
