@@ -1,0 +1,468 @@
+---
+title: "Body Size Metadata"
+author: "Ana Miller-ter Kuile"
+date: "9/3/2021"
+output: word_document
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(EMLassemblyline)
+library(kableExtra)
+library(pander)
+library(here)
+
+```
+
+
+Please revise and fill in missing information highlighted in yellow. The information in this documet will be used to create the EML of the data packege to be published on the Environmenta Data Initiative (EDI) repository.
+
+### Data Package Title
+Palmyra Atoll body siza data for commonly-surveyed taxa, including cane spiders, geckos, and other spiders and insects
+
+
+### Abstract
+_Include what, why, where, when, and how_
+
+|Information| Description |
+|-----------|------------|
+|What| Cane Spider, Gecko and other instects body size data |
+|Why|  |
+|Where |Palmyra Atoll |
+|When | samples from differente years between 2009 and 2015 |
+|How|  |
+
+
+
+### Creators
+_These are the people who will show up as authors in the dataset citation. These are the individuals who have provided intellectual or other significant contributions to the creation of this dataset. Please add the information of all individulas that should be part of the authroship of this dataset_
+
+```{r, creator table, echo = FALSE, message= FALSE, warning= FALSE}
+
+first_name <- c("Ana", "")
+middle_in <- c("", "")
+last_name <- c("Miller Ter-Kuile", "")
+organization <- c("University of California Santa Barbara", "")
+email <- c("ana00@ucsb.edu", "")
+orcid <- c("", "")
+
+creator_colname <- c("First Name", "Middle Initial", "Last Name", "Organization", "e-mail address", "ORCID ID")
+
+creator_table <- tibble(first_name, middle_in, last_name, organization, email, orcid)
+
+colnames(creator_table) <- creator_colname
+
+```
+
+
+```{r, creators table export, echo=FALSE, message= FALSE, warning= FALSE}
+
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions('graph.fontsize', '5')
+
+pander(creator_table)
+```
+
+
+### Other personnel names and roles 
+
+_Who should a data user contact with questions about these data?_
+_There must be at least one person or organization name to serve as the contact for this dataset._
+_You may also list other personnel who participated in the project (such as field crew, lab tech, data entry etc.) in this table with optional fields e-mail addresses, organization and ORCID ID._
+
+```{r, personnel table, echo = FALSE, message= FALSE, warning= FALSE}
+
+p_first_name <- c("Ana", "")
+p_middle_in <- c("", "")
+p_last_name <- c("Miller Ter-Kuile", "")
+p_organization <- c("University of California Santa Barbara", "")
+p_email <- c("ana00@ucsb.edu", "")
+p_orcid <- c("", "")
+p_role <- c("contact", "")
+
+personnel_colnames <- c("First Name", "Middle Initial", "Last Name", "Organization", "e-mail address", "ORCID ID", "Role in project")
+
+
+personnel_table <- tibble(p_first_name, p_middle_in, p_last_name, p_organization, p_email, p_orcid, p_role)
+
+colnames(personnel_table) <- personnel_colnames
+
+```
+
+
+```{r, personnel table export, echo=FALSE, message= FALSE, warning= FALSE}
+
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions('graph.fontsize', '5')
+
+pander(personnel_table)
+```
+
+
+### License 
+Select a license for release of your data.
+
+[CCO – most accommodating of data reuse](https://creativecommons.org/publicdomain/zero/1.0/)
+
+or
+
+[CCBY – requires attribution](https://creativecommons.org/licenses/by/4.0/)
+
+You want your data to be published under:
+
+### Keywords
+_Using keywords from a controlled vocabulary (CV) will improve the future discovery and reuse of your data.  The LTER CV is a good source for keywords. Access the [LTER CV here](https://vocab.lternet.edu/vocab/vocab/index.php).  Also, please determine one or two keywords that best describe your lab, station, and/or project (e.g., Trout Lake Station, NTL LTER).). Add as many rows to this table as needed_
+
+|Keyword|
+|-------|
+|Palmyra Atoll|
+|Body Size  |
+|Gecko   |
+|Cane Spider  |
+|Insects  |
+|  |
+|  |
+|  |
+|  |
+
+
+
+### Funding of this work
+_List only the main PI of a grant that supported this project, starting with the main grant first.  Add rows to the table if several grants were involved._
+
+
+```{r, funding table, echo = FALSE, message= FALSE, warning= FALSE, message= FALSE, warning= FALSE}
+
+pi_first_name <- "PI name here"
+pi_middle_in <- ""
+pi_last_name <- ""
+pi_email <- ""
+pi_orcid <- ""
+title_grant <- ""
+fund_agency <- ""
+fund_id <- ""
+
+fund_colnames <- c("PI First Name", "PI Middle Initial", "PI Last Name", "PI email", "PI ORCID ID", "Title of Grant", "Funding Agency", "Funding Identification Number")
+
+
+funding_table <- tibble(pi_first_name, pi_middle_in, pi_last_name, pi_email, pi_orcid, title_grant, fund_agency, fund_id)
+
+colnames(funding_table) <- fund_colnames
+
+```
+
+
+```{r, funding table export, echo=FALSE, message= FALSE, warning= FALSE}
+
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions('graph.fontsize', '5')
+
+pander(funding_table)
+```
+
+
+
+### Timeframe
+|Information| Description|
+|-----------|------------|
+|Begin date| 2009 |
+|End date | 2015 |
+|Data collection ongoing or completed?|Completed  |
+
+### Geographic location
+
+_Use decimal degrees to define a point or a bounding box. Copy this block to add multiple points or areas._
+
+**Verbal description:** Palmyra Atoll
+
+|Direction|Coordinate|
+|----------|----------|
+|North bound| 5.88333 |
+|South bound| 5.871  |
+|East bound | -162.043 |
+|West bound | -162.083 |
+
+
+
+
+### Methods
+_Be specific about the study design and field and lab methods for collecting and processing the data. Include instrument descriptions and protocol citations._
+
+
+### Data Provenance
+
+_Were these data derived from other data? If so, you will want to document this information so users know where these data came from.  Please specify the source datasets used in the below provenance table, preferably with their DOI or URL.  An example of a dataset derived from several others is here._
+
+
+
+```{r, data provenance, echo = FALSE, message= FALSE, warning= FALSE}
+
+data_title <- "data title here"
+data_doi_url <- ""
+creator_name <- ""
+contact_email <- ""
+
+provenance_colnames <- c("Dataset title", "Dataset DOI or URL", "Creator Name", "Contact E-mail")
+
+
+provenance_table <- tibble(data_title, data_doi_url, creator_name, contact_email)
+
+colnames(provenance_table) <- provenance_colnames
+
+```
+
+
+```{r, funding table, export, echo=FALSE, message= FALSE, warning= FALSE}
+
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions('graph.fontsize', '5')
+
+pander(provenance_colnames)
+```
+
+
+
+### Data Tables
+
+
+For each data set please check and fill in the missing information ofthe following tables. Each row describes one column in your data table.
+
+Complete each row as follows:
+
+- **Description:** Please give a specific definition of the column name. This can be lengthy.
+- **Unit:** Identify units for all numeric variables. All rows where there is an * under the unit column must be filled in with a unit.
+- **Date format:** Please tell us exactly how the date and time is formatted: e.g. mm/dd/yyyy hh:mm:ss plus the time zone and whether or not daylight savings was observed.  ISO date format of YYYY-MM-DD or YYYY-MM-DD hh:mm:ss is preferred.
+- **Missing value code:** If a code for ‘no data’ is used, please specify: e.g., -99999
+- **Missing value code Explanation:** Why are this calues missing? e.g: value not available, value not recorded.
+
+
+1. **Dataset Title** 2009_2010_2015_cane_spider_body_size
+<!--_Include what, where, and when in the dataset title_-->
+
+
+- **Table description:** Palmyra Atoll Cane Spider lenght, weight and prosoma length by species and site for years 2009, 20010 and 2015.
+
+
+```{r, echo = FALSE, message= FALSE, warning= FALSE}
+
+## Location of datasets in the package
+path_data <- paste0(getwd(), "/clean_data")
+path_templates <- paste0(getwd(), "/EML/data_attributes")
+data_name <- "2009_2010_2015_cane_spider_body_size"
+
+
+## Creating the attribute .txt
+# EMLassemblyline::template_table_attributes(
+#   path = path_templates,
+#   data.path = path_data,
+#   data.table = "2009_2010_2015_cane_spider_body_size.csv")
+
+## reading text into a data frame
+data_attributes <- read.delim2(here::here(paste0("EML/data_attributes/attributes_", data_name,".txt")))
+
+
+
+```
+
+
+
+```{r, attribute table, echo=FALSE, message= FALSE, warning= FALSE}
+## Sttings for the pander table
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions('graph.fontsize', '5')
+
+## Rendering attributes into a table
+pander(data_attributes)
+```
+
+
+
+<!--### Attributes code
+
+_If you use codes in your column, please define each code in the following table. Fill in only if necessary_ -->
+
+```{r, attribute code, echo = FALSE, message= FALSE, warning= FALSE}
+
+# EMLassemblyline::template_categorical_variables(
+#   path = path_templates, 
+#   data.path = path_data)
+# 
+# cat_vars <- read.delim2(paste0("EML/data_attributes/catvars_", data_name,".txt"))
+
+```
+
+
+```{r, categorical variables table, echo=FALSE, message= FALSE, warning= FALSE}
+## Setting pander table settings
+# panderOptions('table.alignment.default', function(df)
+#     ifelse(sapply(df, is.numeric), 'right', 'left'))
+# panderOptions('table.split.table', Inf)
+# panderOptions('big.mark', ",")
+# panderOptions('keep.trailing.zeros', TRUE)
+# panderOptions('missing', '')
+# panderOptions('graph.fontsize', '5')
+# 
+# ## knit as a table
+# pander(cat_vars)
+```
+
+
+
+<!-- ### Spatial data objects
+
+(List any geospatial data objects you would like to archive. Organize spatial data into .zip directories
+and describe each.)
+Directory name: (A short name for the data)
+Directory description: (A brief description of the data)
+
+Horizontal Coordinate System Name (e.g. WGS_1984_UTM_Zone_12N)
+Horizontal Accuracy Report
+Vertical Accuracy Report
+Cell Size X Direction
+Cell Size Y Direction
+Raster Origin (e.g. Upper Left)
+Number of Rows
+Number of Columns
+Number of Verticals
+Cell Geometry (e.g. pixel) -->
+
+
+### Scripts/code (software)
+
+_List any software scripts/code you would like to archive along with your data. These may include processing scripts you wrote to create, clean, or analyze the data._
+
+File name	Description	Scripting language
+
+```{r, script info, echo = FALSE, message= FALSE, warning= FALSE}
+
+file_name <- "file name here"
+description <- ""
+language <- ""
+
+
+script_info_colnames <- c("File name", "Description", "Scripting language")
+
+
+script_info <- tibble(file_name, description, language)
+
+colnames(script_info) <- script_info_colnames
+
+```
+
+
+```{r, script info export, echo=FALSE, message= FALSE, warning= FALSE}
+
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions('graph.fontsize', '5')
+
+pander(script_info)
+```
+
+
+
+
+### Other objects (misc.)
+_List any other objects (e.g. .zip, .pdf, etc.) you would like to archive._
+
+
+
+```{r, other objects, echo = FALSE, message= FALSE, warning= FALSE}
+
+misc_file_name <- "file name here"
+misc_description <- ""
+misc_data_type <- ""
+
+
+other_obj_colnames <- c("File name", "Description", "Data type")
+
+other_objects <- tibble(misc_file_name, misc_description, misc_data_type)
+
+colnames(other_objects) <- other_obj_colnames
+
+```
+
+
+```{r, other objects export, echo=FALSE, message= FALSE, warning= FALSE}
+
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions('graph.fontsize', '5')
+
+pander(other_objects)
+```
+
+
+### Articles
+_List articles citing this dataset_
+
+
+```{r, publications, echo = FALSE, message= FALSE, warning= FALSE}
+
+doi <- "article doi here"
+article_title <- ""
+journal <- ""
+
+
+publications_colnames <- c("Article DOI or URL (DOI is preferred)", "Article title", "Journal title")
+
+publications <- tibble(doi, article_title, journal)
+
+colnames(publications) <- publications_colnames
+
+```
+
+
+```{r, publications export, echo=FALSE, message= FALSE, warning= FALSE}
+
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('missing', '')
+panderOptions('graph.fontsize', '5')
+
+pander(publications)
+```
+
+
+### Notes and Comments
+
