@@ -1,0 +1,10 @@
+attributeName	attributeDefinition	class	unit	dateTimeFormatString	missingValueCode	missingValueCodeExplanation
+year		Date		!Add datetime specifier here!		
+date_collected		Date		!Add datetime specifier here!		
+species		categorical				
+site		character				
+spider_id		character				
+length		numeric	!Add units here!			
+weight		numeric	!Add units here!			
+prosoma		numeric	!Add units here!			
+notes		categorical				
