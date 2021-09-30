@@ -1,0 +1,53 @@
+---
+title: "Download Raw Data"
+author: "Camila Vargas"
+date: "9/29/2021"
+output: html_document
+---
+
+This script downloads data from a specific folder on our Google Drive
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(googledrive)
+library(here)
+library(tidyverse)
+
+
+## Sets R not to use scientific notations
+options(scipen=999) 
+
+# Create raw data folders 
+dir.create(here::here("raw_data"))
+
+dir.create(here::here("clean_data"))
+
+```
+
+## Download data files into local computer
+
+Make sure the file path on the code is updated to the correct folder.
+
+1. Weather Data
+
+```{r download weather files}
+# url of folder where the data lives
+# Copy paste the url of the folder where the data lives
+
+weather_folder_url <- "https://drive.google.com/drive/folders/12YcXFF5Dz11c29FtGtwZVCEwrgC4iVV4"
+
+# list of files inside the folder
+weather_files <- drive_ls(as_id(weather_folder_url))
+
+
+## Download all file to local computer. 
+
+purrr::walk2(
+    map(weather_files$id, as_id),
+    paste0("raw_data/","weather_", weather_files$name),
+    drive_download,
+    overwrite = TRUE)
+
+```
+

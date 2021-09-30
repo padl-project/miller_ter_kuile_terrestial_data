@@ -22,46 +22,23 @@ library(lubridate)
 ## Sets R not to use scientific notations
 options(scipen=999) 
 
-# Create raw data folders - DO I NEED A IF STATEMENT???
+# Create raw data folders 
 
-if (!dir.exists(here::here("/raw_data"))){
-  dir.create(paste0(getwd(),"/raw_data"))
-}
+dir.create(here::here("raw_data"))
 
-## If necesary create a sub directory inside the raw_data. This will be the case for porject that will end up in more than one package.
-dir.create(paste0(getwd(),"/raw_data/weather"))
 
 ```
 
 
+## Check all necesary files are in the raw_data folder
 
-## Download data files into local computer
+In this case we are checking for weather data
+```{r}
+## File path to raw data used in this script
+raw_data_path <- here::here("raw_data")
 
-In this case, the project has multiple types of data. Each type of data will be cleaned in its own Rmd and will become its own package. 
-Make sure the file path on the code is updated to the correct folder. In this case we are working with the weather data, so data is saved inside the `weather` folder. Update folder name if you are downloading other type of data.
-
-```{r download files}
-# url of folder where the data lives
-# Copy pasete the url of the folder where the data lives
-
-folder_url <- "https://drive.google.com/drive/u/1/folders/12YcXFF5Dz11c29FtGtwZVCEwrgC4iVV4"
-
-# list of files inside the folder
-files <- drive_ls(as_id(folder_url))
-
-## Download each file to local computer
-purrr::walk2(
-    map(files$id, as_id),
-    paste0("raw_data/weather/", files$name),
-    drive_download,
-    overwrite = TRUE
-  )
-
-# Check all files where downloaded
-# Count files inside the raw_data forder to make sure the number of files downloaded is what is expected.
-raw_data_path <- paste0(getwd(), "/raw_data/weather")
-
-length(list.files(raw_data_path))
+# Count files inside the raw_data folder to make sure the number of files downloaded is what is expected.
+length(list.files(raw_data_path, pattern = "weather"))
 
 ```
 
@@ -98,7 +75,7 @@ read_csv_clean <- function(dataset){
 ## Function to read each pp sheet
 read_weather_excel <- function(sheet_name){
    
-  read_excel(paste0(raw_data_path, "/2010_2016_Palmyra_Weather_Table.xlsx"), sheet = sheet_name, skip = 6) %>% 
+  read_excel(paste0(raw_data_path, "/weather_2010_2016_Palmyra_Weather_Table.xlsx"), sheet = sheet_name, skip = 6) %>% 
   clean_names() %>% 
   filter(!batt_volt_avg %in% c("Volts", "Avg", NA)) %>% 
   select(1:last_col(2)) %>% 
@@ -119,7 +96,7 @@ for (i in all_csv$n){
   assign(all_csv$obj_name[i], read_csv_clean(all_csv$path[i]))
 }
 
-## This csv file is a summary table with avarage pp for years 2002 to 2016. We can use it to check if this data matches the raw data. But we do not need this file for the weather package.
+## This csv file is a summary table with average pp for years 2002 to 2016. We can use it to check if this data matches the raw data. But we do not need this file for the weather package.
 ```
 
 ### Read Weather Tables
@@ -129,7 +106,7 @@ Timestamp every 15 min year round* for all weather data
 ```{r}
 ## Weather table (xls) - timestamp ever 15 min of pp register by day
 
-## Read each sheet separately to be mak sure all data is being read correctly
+## Read each sheet separately to be make sure all data is being read correctly
 
 w_2010 <- read_weather_excel("2010")
 
@@ -199,7 +176,7 @@ w_15_16 <- bind_rows(w_2015, w_2016) %>%
 According to the metadata there are three ways missing values are presented: "serv.", "NAN" or NA
 
 NA is an empty cell
-**From the orriginal Excel**
+**From the original Excel**
 NAN = Not A Number
 serv. = Servicing logger (no data)
 
@@ -305,6 +282,10 @@ headers <- c("day", "Jul-08", "Aug-08", "Sep-08", "Oct-08", "Nov-08", "Dec-08", 
 names(pp_monthly) <- headers
 
 pp_monthly_clean <- pp_monthly %>% 
+  rename(test = "Feb-17") %>% 
+  mutate(test = ifelse(test == "2..8", 2.8, test),
+         "Feb-17" = as.numeric(test)) %>% 
+  select(-test) %>% 
   pivot_longer(cols = 2:113,
                names_to = "month_year",
                values_to = "rainfall") %>% 
@@ -333,7 +314,7 @@ write_csv(pp_monthly_clean, paste0(getwd(), "/clean_data/2008_2017_palmyra_month
 ## Upload to dive
 ```{r}
 
-## Finalized data forlder url
+## Finalized data folder url
 finalized_url <- "https://drive.google.com/drive/u/1/folders/1xAeDVipB1X18JKCebb6J09qcvUqjKOGp"
 
 ## Upload weather data
@@ -342,7 +323,7 @@ drive_upload(media = paste0(getwd(),"/clean_data/2010_2016_palmyra_weather_table
              name = "2010_2016_palmyra_weather_table.csv",
              type = "csv")
 
-## Uploaded susccesfully: need to ceck NaN. When saving csv they tun into NAs. Do we need to keep them as NaN?
+
 
 ## Upload rainfall table
 drive_upload(media = paste0(getwd(),"/clean_data/2008_2017_palmyra_monthly_rainfall.csv"),
@@ -353,7 +334,7 @@ drive_upload(media = paste0(getwd(),"/clean_data/2008_2017_palmyra_monthly_rainf
 ```
 
 
-## Metadata
+
 
 
 
