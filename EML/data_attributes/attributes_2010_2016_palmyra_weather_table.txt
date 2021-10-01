@@ -1,0 +1,16 @@
+attributeName	attributeDefinition	class	unit	dateTimeFormatString	missingValueCode	missingValueCodeExplanation
+year		Date		!Add datetime specifier here!		
+date		Date		!Add datetime specifier here!		
+time		Date		!Add datetime specifier here!		
+batt_avg		numeric	!Add units here!			
+air_tc_avg		numeric	!Add units here!			
+rh		numeric	!Add units here!			
+par_den_avg		numeric	!Add units here!			
+par_tot_tot		numeric	!Add units here!			
+bp_avg		numeric	!Add units here!			
+slr_avg		numeric	!Add units here!			
+slr_tot		numeric	!Add units here!			
+wind_speed_avg		numeric	!Add units here!			
+wind_speed_max		numeric	!Add units here!			
+wind_speed_min		numeric	!Add units here!			
+wind_dir		numeric	!Add units here!			

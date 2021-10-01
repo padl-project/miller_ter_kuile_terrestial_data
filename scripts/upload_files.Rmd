@@ -1,0 +1,50 @@
+---
+title: "Upload files to Drive"
+author: "Camila Vargas"
+date: "9/30/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(googledrive)
+library(tidyverse)
+
+```
+
+
+## Upload to dive
+Data
+```{r}
+
+## Finalized data folder url
+final_files_url <- "https://drive.google.com/drive/folders/1fX5iD8FF3aGSJh_3fbXpxSQQTrEPVyhA"
+
+## Upload weather data
+drive_upload(media = paste0(getwd(),"/clean_data/2010_2016_palmyra_weather_table.csv"),
+             path = as_id(finalized_url),
+             name = "2010_2016_palmyra_weather_table.csv",
+             type = "csv")
+
+
+
+## Upload rainfall table
+drive_upload(media = paste0(getwd(),"/clean_data/2008_2017_palmyra_monthly_rainfall.csv"),
+             path = as_id(finalized_url),
+             name = "2008_2017_palmyra_monthly_rainfall.csv",
+             type = "csv")
+
+```
+
+Metadata
+
+```{r}
+## Upload metadata
+drive_upload(media = here::here("EML/weather_data/weather_metadata_doc.docx"),
+             path = as_id(final_files_url),
+             name = "miller-ter-kuile_weather_metadata.docx",
+             type = "docx")
+```
+
+
