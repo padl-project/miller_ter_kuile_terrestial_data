@@ -6,42 +6,36 @@ library(EMLassemblyline)
 library(XML)
 library(readxl)
 library(dplyr)
-library(googlesheets4)
 library(here)
+library(googledrive)
 
-#####user edit zone
+############################################################
+## User edit zone
 
-# Download metadata file
-metadata_folder <- "https://drive.google.com/drive/folders/1kG14ZSwvdf1Jc1owZ1vZPXDJW2x4UYpl"
+# change the following number based on each of the datasets
+dataset_id <- 101
 
-metadata_file <- drive_ls(as_id(metadata_folder))
+folder_path<- here::here("EML/project.101/")
 
-## Download all file to local computer.
-drive_download(
-  file = as_id(metadata_file$id),
-  path = paste0(getwd(), "/EML/", "metadata"),
-  type = "xlsx")
-
-
-
-#change the following number based on each of the datasets
-dataset_id=101
-
-folder_path<- here::here("EML/project.101")
 #end user edit zone###########
+############################################################
 
-######################################
 #loading all the functions
-source(here:here('EML/EML_generation/get_meta_xlsx.R'))
-source(here::here('EML/EML_generation/generate_EML_Assemblyline.R'))
+source(paste0(getwd(), '/EML/EML_generation/download_metadata.R'))
+source(paste0(getwd(), '/EML/EML_generation/get_meta_xlsx.R'))
+source(paste0(getwd(), '/EML/EML_generation/generate_EML_Assemblyline.R'))
+
 
 #read the metadata content out of xlsx
-metadata <- get_meta_xlsx(folder_path=folder_path,dataset_id=dataset_id) 
+metadata <- get_meta_xlsx(
+  folder_path = folder_path,
+  dataset_id = dataset_id) 
 
 #fill the EML content into the template
-eml_in_template <- generate_EML_Assemblyline(project_path= paste0(folder_path,"project.",dataset_id,"/"),
-                                             excel_input=metadata,
-                                             dataset_id_input=dataset_id)
+eml_in_template <- generate_EML_Assemblyline(
+  project_path = folder_path,
+  excel_input = metadata,
+  dataset_id_input = dataset_id)
 
 # Export EML --------------------------------------------------------------------
 do.call(make_eml, eml_in_template[names(eml_in_template) %in% names(formals(make_eml))])

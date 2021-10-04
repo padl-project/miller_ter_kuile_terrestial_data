@@ -12,6 +12,39 @@
   </access>
   <dataset>
     <title>Palmyra Atoll Weather Tables and Monthly Rainfall 2008-2017</title>
+    <creator>
+      <individualName>
+        <givenName>Ana</givenName>
+        <surName>Miller-ter Kuile</surName>
+      </individualName>
+      <organizationName>Univerity of California Santa Barbara</organizationName>
+      <electronicMailAddress>ana00@ucsb.edu</electronicMailAddress>
+    </creator>
+    <creator>
+      <individualName>
+        <givenName>Hillary</givenName>
+        <surName>Young</surName>
+      </individualName>
+      <organizationName>Univerity of California Santa Barbara</organizationName>
+      <electronicMailAddress>hillary.young@lifesci.ucsb.edu</electronicMailAddress>
+    </creator>
+    <associatedParty>
+      <individualName>
+        <givenName>Camila</givenName>
+        <surName>Vargas Poulsen</surName>
+      </individualName>
+      <organizationName>PADL Data Manager, Univerity of California Santa Barbara</organizationName>
+      <electronicMailAddress>camilavargas@ucsb.edu</electronicMailAddress>
+      <role>associated party</role>
+    </associatedParty>
+    <associatedParty>
+      <individualName>
+        <givenName>Beth</givenName>
+        <surName>Davis</surName>
+      </individualName>
+      <organizationName>Environmental Data Initiative</organizationName>
+      <role>associated party</role>
+    </associatedParty>
     <pubDate>2021-10-04</pubDate>
     <abstract>
       <para>
@@ -82,6 +115,14 @@
     <maintenance>
       <description>Completed</description>
     </maintenance>
+    <contact>
+      <individualName>
+        <givenName>Ana</givenName>
+        <surName>Miller-ter Kuile</surName>
+      </individualName>
+      <organizationName>Univerity of California Santa Barbara</organizationName>
+      <electronicMailAddress>ana00@ucsb.edu</electronicMailAddress>
+    </contact>
     <methods>
       <methodStep>
         <description>
@@ -102,6 +143,19 @@
         </description>
       </methodStep>
     </methods>
+    <project>
+      <title>No project title to report</title>
+      <personnel>
+        <individualName>
+          <givenName>Hillary</givenName>
+          <surName>Young</surName>
+        </individualName>
+        <organizationName>Univerity of California Santa Barbara</organizationName>
+        <electronicMailAddress>hillary.young@lifesci.ucsb.edu</electronicMailAddress>
+        <role>Principal Investigator</role>
+      </personnel>
+      <funding>No funding to report</funding>
+    </project>
     <dataTable>
       <entityName>Palmyra Atoll monthly rainfall</entityName>
       <entityDescription>Daily rainfall in millimeters from July 1, 2008, to October 31, 2017</entityDescription>
@@ -122,7 +176,7 @@
         </dataFormat>
         <distribution>
           <online>
-            <url>http://aaa/2008_2017_palmyra_monthly_rainfall.csv</url>
+            <url>NA2008_2017_palmyra_monthly_rainfall.csv</url>
           </online>
         </distribution>
       </physical>
@@ -140,13 +194,13 @@
         </attribute>
         <attribute>
           <attributeName>month</attributeName>
-          <attributeDefinition>corresponding month</attributeDefinition>
+          <attributeDefinition>three letter name of corresponding month of data collection</attributeDefinition>
           <storageType>string</storageType>
           <measurementScale>
             <nominal>
               <nonNumericDomain>
                 <textDomain>
-                  <definition>corresponding month</definition>
+                  <definition>three letter name of corresponding month of data collection</definition>
                 </textDomain>
               </nonNumericDomain>
             </nominal>
@@ -205,7 +259,7 @@
         </dataFormat>
         <distribution>
           <online>
-            <url>http://aaa/2010_2016_palmyra_weather_table.csv</url>
+            <url>NA2010_2016_palmyra_weather_table.csv</url>
           </online>
         </distribution>
       </physical>
