@@ -1,5 +1,0 @@
-attributeName	attributeDefinition	class	unit	dateTimeFormatString	missingValueCode	missingValueCodeExplanation
-year		Date		!Add datetime specifier here!		
-month		character				
-day		Date		!Add datetime specifier here!		
-rainfall		numeric	!Add units here!			
