@@ -302,7 +302,7 @@ pp_monthly_clean <- pp_monthly %>%
 
 ## Save data into local computer
 ```{r}
-dir.create(path = paste0(getwd(),"/clean_data"))
+# dir.create(path = paste0(getwd(),"/clean_data"))
 
 write_csv(w_complete, paste0(getwd(),"/clean_data/2010_2016_palmyra_weather_table.csv"))
 
@@ -310,29 +310,6 @@ write_csv(pp_monthly_clean, paste0(getwd(), "/clean_data/2008_2017_palmyra_month
 
 ```
 
-
-
-## Upload to dive
-```{r}
-
-# ## Finalized data folder url
-# finalized_url <- "https://drive.google.com/drive/u/1/folders/1xAeDVipB1X18JKCebb6J09qcvUqjKOGp"
-# 
-# ## Upload weather data
-# drive_upload(media = paste0(getwd(),"/clean_data/2010_2016_palmyra_weather_table.csv"),
-#              path = as_id(finalized_url),
-#              name = "2010_2016_palmyra_weather_table.csv",
-#              type = "csv")
-# 
-# 
-# 
-# ## Upload rainfall table
-# drive_upload(media = paste0(getwd(),"/clean_data/2008_2017_palmyra_monthly_rainfall.csv"),
-#              path = as_id(finalized_url),
-#              name = "2008_2017_palmyra_monthly_rainfall.csv",
-#              type = "csv")
-
-```
 
 
 
