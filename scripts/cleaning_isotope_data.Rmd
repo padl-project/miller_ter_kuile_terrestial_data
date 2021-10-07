@@ -129,27 +129,12 @@ if (!dir.exists(here::here("/raw_data"))){
   dir.create(paste0(getwd(),"/raw_data"))
 }
 
-## If necesary create a sub directory inside the raw_data. This will be the case for projects that will end up in more than one package.
+## If necessary create a sub directory inside the raw_data. This will be the case for projects that will end up in more than one package.
 dir.create(paste0(getwd(),"/raw_data/isotope"))
 ```
 
-## Googledrive package sign-in
-
-```{r}
-# To change accounts on the googledrive package, uninstall then reinstall the package. Run a googledrive function to prompt the sign-in selection screen
-remove.packages("googledrive")
-install.packages("googledrive")
-
-drive_find(n_max = 10)
-```
-
-With set-up complete, now begin opening and cleaning data
 
 
-## Download data files into local computer
-
-In this case, the project has multiple types of data. Each type of data will be cleaned in its own Rmd and will become its own package. 
-Make sure the file path on the code is updated to the correct folder. In this case we are working with the weather data, so data is saved inside the `isotope` folder. Update folder name if you are downloading other type of data.
 
 ```{r download files}
 # url of folder where the data lives

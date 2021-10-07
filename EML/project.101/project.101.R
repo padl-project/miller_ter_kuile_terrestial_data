@@ -9,6 +9,9 @@ library(dplyr)
 library(here)
 library(googledrive)
 
+## authorize access to googledrive
+drive_find(n_max = 10)
+
 ############################################################
 ## User edit zone
 

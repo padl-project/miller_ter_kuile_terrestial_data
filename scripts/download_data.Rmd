@@ -51,3 +51,94 @@ purrr::walk2(
 
 ```
 
+
+2. Body Size
+
+```{r download weather files}
+# url of folder where the data lives
+# Copy paste the url of the folder where the data lives
+
+bs_folder_url <- ""
+
+# list of files inside the folder
+bs_files <- drive_ls(as_id(bs_folder_url))
+
+
+## Download all file to local computer. 
+
+purrr::walk2(
+    map(bs_files$id, as_id),
+    paste0("raw_data/","bs_", bs_files$name),
+    drive_download,
+    overwrite = TRUE)
+
+```
+
+
+3. Isotopes
+
+```{r download weather files}
+# url of folder where the data lives
+# Copy paste the url of the folder where the data lives
+
+isotopes_folder_url <- "https://drive.google.com/drive/folders/1pEYBUtE946U2Q05T6zRQ7QWh17Pyzqcj"
+
+# list of files inside the folder
+isotopes_files <- drive_ls(as_id(isotopes_folder_url))
+
+
+## Download all file to local computer. 
+
+purrr::walk2(
+    map(isotopes_files$id, as_id),
+    paste0("raw_data/","isotopes_", isotopes_files$name),
+    drive_download,
+    overwrite = TRUE)
+
+```
+
+
+4. Plant Data
+
+```{r download weather files}
+# url of folder where the data lives
+# Copy paste the url of the folder where the data lives
+
+plant_folder_url <- ""
+
+# list of files inside the folder
+plant_files <- drive_ls(as_id(plant_folder_url))
+
+
+## Download all file to local computer. 
+
+purrr::walk2(
+    map(plant_files$id, as_id),
+    paste0("raw_data/","plant_", plant_files$name),
+    drive_download,
+    overwrite = TRUE)
+
+```
+
+
+5. Island data
+
+```{r download weather files}
+# url of folder where the data lives
+# Copy paste the url of the folder where the data lives
+
+island_folder_url <- ""
+
+# list of files inside the folder
+island_files <- drive_ls(as_id(island_folder_url))
+
+
+## Download all file to local computer. 
+
+purrr::walk2(
+    map(island_files$id, as_id),
+    paste0("raw_data/","island_", island_files$name),
+    drive_download,
+    overwrite = TRUE)
+
+```

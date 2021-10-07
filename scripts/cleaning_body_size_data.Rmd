@@ -24,14 +24,11 @@ library(lubridate)
 ## Sets R not to use scientific notations
 options(scipen=999) 
 
-# Create raw data folders - IS THE IF STATEMENT NECESARY???
-
+# Create raw data folders 
 if (!dir.exists(here::here("/raw_data"))){
   dir.create(paste0(getwd(),"/raw_data"))
 }
 
-## If necesary create a sub directory inside the raw_data. This will be the case for porject that will end up in more than one package.
-dir.create(paste0(getwd(),"/raw_data/body_size"))
 
 ```
 
