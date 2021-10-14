@@ -47,4 +47,13 @@ drive_upload(media = here::here("EML/weather_data/weather_metadata_doc.docx"),
              type = "docx")
 ```
 
+xml file
+
+```{r}
+
+drive_upload(media = here::here("EML/project.101/edi.966.2.xml"),
+             path = as_id(final_files_url),
+             name = "edi.966.2.xml")
+
+```
 
